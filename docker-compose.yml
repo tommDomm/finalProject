@@ -9,6 +9,8 @@ services:
       POSTGRES_PASSWORD: root
     networks:
       - flats_ntwrk
+    volumes:
+      - ../postgresql:/var/lib/postgresql/data
   pgadmin:
     build: pgadmin
     image: flats_pgadmin:1.0.0
@@ -27,7 +29,23 @@ services:
       - "81:8080"
     networks:
       - flats_ntwrk
-
+  user-service:
+    build: user-service
+    image: flats_user-service:1.0.2
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - flats_ntwrk
+  audit-service:
+    build: audit-service
+    image: flats_audit-service:1.0.0
+    networks:
+      - flats_ntwrk
+  parser-service:
+    build: parser/realt
+    image: flats_parser:1.0.0
+    networks:
+      - flats_ntwrk
   proxy:
     build: proxy
     image: flats_proxy:1.0.0
