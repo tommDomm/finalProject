@@ -1,0 +1,15 @@
+app:
+  service:
+    url:
+      endpoint: http://localhost:80/api/v1/users/verification
+  mail:
+    properties:
+      sender: 1@outlook.com
+spring:
+  mail:
+    host: smtp-mail.outlook.com
+    port: 587
+    username: 1@outlook.com
+    password: qwe123QWE!@#
+    protocol: smtp
+

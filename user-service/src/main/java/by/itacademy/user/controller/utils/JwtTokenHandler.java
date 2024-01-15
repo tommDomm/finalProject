@@ -30,6 +30,15 @@ public class JwtTokenHandler {
                 .signWith(SignatureAlgorithm.HS512, property.getSecret())
                 .compact();
     }
+    public String generateAccessToken(UserDetails user, String role) {
+        return Jwts.builder()
+                .setSubject(user.getUsername()+":"+role)
+                .setIssuer(property.getIssuer())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(7))) // 1 week
+                .signWith(SignatureAlgorithm.HS512, property.getSecret())
+                .compact();
+    }
 
     public String getUsername(String token) {
         Claims claims = Jwts.parser()
@@ -37,7 +46,7 @@ public class JwtTokenHandler {
                 .parseClaimsJws(token)
                 .getBody();
 
-        return claims.getSubject();
+        return claims.getSubject().split(":")[0];
     }
 
     public Date getExpirationDate(String token) {
@@ -66,4 +75,6 @@ public class JwtTokenHandler {
         }
         return false;
     }
+
+
 }

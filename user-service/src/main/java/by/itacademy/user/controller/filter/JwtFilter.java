@@ -1,6 +1,7 @@
 package by.itacademy.user.controller.filter;
 
 import by.itacademy.user.controller.utils.JwtTokenHandler;
+import by.itacademy.user.service.UserDetailServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,10 +23,10 @@ import static org.apache.logging.log4j.util.Strings.isEmpty;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final UserDetailsManager userManager;
+    private final UserDetailServiceImpl userManager;
     private final JwtTokenHandler jwtHandler;
 
-    public JwtFilter(UserDetailsManager userManager, JwtTokenHandler jwtHandler) {
+    public JwtFilter(UserDetailServiceImpl userManager, JwtTokenHandler jwtHandler) {
         this.userManager = userManager;
         this.jwtHandler = jwtHandler;
     }
@@ -52,7 +53,6 @@ public class JwtFilter extends OncePerRequestFilter {
         // Get user identity and set it on the spring security context
         UserDetails userDetails = userManager
                 .loadUserByUsername(jwtHandler.getUsername(token));
-
         UsernamePasswordAuthenticationToken
                 authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null,

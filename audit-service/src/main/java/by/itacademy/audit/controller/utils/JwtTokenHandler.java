@@ -23,7 +23,16 @@ public class JwtTokenHandler {
                 .parseClaimsJws(token)
                 .getBody();
 
-        return claims.getSubject();
+        return claims.getSubject().split(":")[0];
+    }
+
+    public String getRole(String token){
+        Claims claims = Jwts.parser()
+                .setSigningKey(property.getSecret())
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject().split(":")[1];
     }
 
     public Date getExpirationDate(String token) {

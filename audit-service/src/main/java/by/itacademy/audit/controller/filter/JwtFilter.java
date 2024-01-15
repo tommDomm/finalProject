@@ -43,26 +43,18 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Get jwt token and validate
         final String token = header.split(" ")[1].trim();
         if (!jwtHandler.validate(token)) {
             chain.doFilter(request, response);
             return;
         }
 
-        // Get user identity and set it on the spring security context
-        // 2 Варианта
-        // 1. Сходить на урл /me положив в хэадер токен.
-        // Получить данные на user-service через http ответ разобрать и поместить
-        // в переменную userDetails.
-        // 2. Изначально поместить всё в токен и доставать всё из токена
-
         String userName = jwtHandler.getUsername(token);
-        //мой временный вариант
+        String role = jwtHandler.getRole(token);
+
         List<GrantedAuthority> authorities = new ArrayList<>();
-        if("admin".equals(userName)){
-            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        }
+        authorities.add(new SimpleGrantedAuthority("ROLE_"+role.toUpperCase()));
+
         UserDetails userDetails = new UserDetails() {
             @Override
             public Collection<? extends GrantedAuthority> getAuthorities() {

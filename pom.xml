@@ -13,7 +13,10 @@
     <modules>
         <module>user-service</module>
         <module>audit-service</module>
-        <module>parser</module>
+        <module>parser-services</module>
+        <module>mail-service</module>
+        <module>flat-service</module>
+        <module>report-service</module>
     </modules>
 	
 </project>

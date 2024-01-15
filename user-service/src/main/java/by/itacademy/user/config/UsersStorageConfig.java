@@ -2,11 +2,8 @@ package by.itacademy.user.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -28,18 +25,17 @@ public class UsersStorageConfig {
     public UserDetailsManager memoryUserManager(PasswordEncoder encoder) {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
 
-        manager.createUser(User.builder()
-                .username("user")
-                .password(encoder.encode("123"))
-                .roles("USER")
-                .build());
-
-
-        manager.createUser(User.builder()
-                .username("admin")
-                .password(encoder.encode("321"))
-                .roles("USER", "ADMIN")
-                .build());
+//        manager.createUser(User.builder()
+//                .username("user")
+//                .password(encoder.encode("123"))
+//                .roles("USER")
+//                .build());
+//
+//        manager.createUser(User.builder()
+//                .username("admin")
+//                .password(encoder.encode("admin"))
+//                .roles("USER", "ADMIN")
+//                .build());
 
         return manager;
     }

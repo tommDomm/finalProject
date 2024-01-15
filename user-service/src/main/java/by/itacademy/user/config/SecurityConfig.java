@@ -1,22 +1,26 @@
 package by.itacademy.user.config;
 
 import by.itacademy.user.controller.filter.JwtFilter;
+import by.itacademy.user.dao.Role;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter filter) throws Exception  {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter filter) throws Exception {
         // Enable CORS and disable CSRF
         http = http.cors().and().csrf().disable();
 
@@ -43,19 +47,17 @@ public class SecurityConfig {
                 })
                 .and();
 
-        // Set permissions on endpoints
+
         http.authorizeHttpRequests(requests -> requests
-                // Our public endpoints
-                .requestMatchers( "/users/public/**").permitAll()
-                //Следующие два пример делают одно и тоже
-                .requestMatchers("/users/user/test").hasAnyRole("ADMIN") //Обрати внимание что тут нет префикса ROLE_
-                .requestMatchers("/users/user/test").hasAnyAuthority("ROLE_ADMIN") //А тут есть
-                .requestMatchers(HttpMethod.GET,"/users/user/details").authenticated()
-                // Our private endpoints
+                .requestMatchers("/users/login/**", "/users/verification/**", "/users/registration/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/users/me/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/users/**").hasAnyRole(Role.ADMIN.name(), Role.MANAGER.name())
+                //fixme
+//                .requestMatchers("/users/{uuid}/dt_update/**").access(new WebExpressionAuthorizationManager("@webSecurity.isAdmin(authentication,#uuid)"))
                 .anyRequest().authenticated()
         );
 
-        // Add JWT token filter
+
         http.addFilterBefore(
                 filter,
                 UsernamePasswordAuthenticationFilter.class
